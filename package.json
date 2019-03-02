@@ -1,7 +1,7 @@
 {
-  "name": "Boo",
+  "name": "Lakitu",
   "version": "0.0.1",
-  "description": "Bot general de bienvenida CEMK",
+  "description": "Bot general de la CEMK",
   "main": "node server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
