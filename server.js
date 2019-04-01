@@ -37,7 +37,7 @@ const client = new Discord.Client();
 const guild = new Discord.Guild();
 const config = require("./config.json");
 
-let prefix = process.env.PREFIX;
+let prefix = config.prefix;
 
 client.on('ready', () => {
   console.log('Lakitu iniciado');
@@ -50,6 +50,24 @@ client.on('ready', () => {
    });*/
   //client.user.setActivity('poner orden');
 
+});
+
+client.on("guildMemberAdd", (member) => {
+    let channel = client.channels.get('513088446886313995'); 
+  
+    channel.send({
+        embed: {
+            color: config.color,
+            description: "¡Bienvenid@ al servidor comunitario de MK8D, " + member.user + "!\n\nPor favor, pásate por <#405031085500792833> y por <#471360321504804894> para estar al corriente de cómo funciona el servidor."
+          }
+     }).then(msg => {
+      channel.send({
+        embed: {
+          color: config.color,
+          description: "Para buscar clan tienes habilitado el canal <#405031498496868372>, donde podrás ver clanes que buscan miembros y darte a conocer.\n\nAlternativamente, tienes https://www.mariokartcentral.com/mkc/teams dónde encontrarás también clanes de habla no hispana."
+        }
+      });      
+    });   
 });
 
 client.on('message', async message => {
@@ -65,6 +83,23 @@ client.on('message', async message => {
     let ping = Math.floor(message.client.ping);
     message.channel.send(':ping_pong: Latencia: `' + ping + ' ms.`');
   }
+  
+  /*if (command === "test" && args.length <= 0) {
+    let ping = Math.floor(message.client.ping);
+    message.channel.send({
+        embed: {
+            color: config.color,
+            description: "¡Bienvenid@ al servidor comunitario de MK8D, " + message.member + "!\n\nPor favor, pásate por <#405031085500792833> y por <#471360321504804894> para estar al corriente de cómo funciona el servidor."
+          }
+     });
+    
+    message.channel.send({
+        embed: {
+          color: config.color,
+          description: "Para buscar clan tienes habilitado el canal <#405031498496868372>, donde podrás ver clanes que buscan miembros y darte a conocer.\n\nAlternativamente, tienes https://www.mariokartcentral.com/mkc/teams dónde encontrarás también clanes de habla no hispana."
+        }
+      });
+  }*/
   
   if (command === "hi" && args.length == 1) {
     
@@ -196,34 +231,35 @@ client.on('message', async message => {
     });     
   }
   
-  if (command === "lakitu" && args.length <= 0) {   
-    if (message.member.roles.find("name", "Mods")) {
-        
-      if (usuario) {
-
-        if(usuario.roles.find("name", "sin-clan")) {
-           message.channel.send({
-            embed: {
-              color: config.color,
-              description: "¡Bienvenid@ al servidor comunitario de MK8DX, " + usuario + "!\n\nPor favor, pásate por <#405031085500792833> y por <#471360321504804894> para estar al corriente de cómo funciona el servidor."
-            }
-          });
-          message.channel.send({
-            embed: {
-              color: config.color,
-              description: "Para buscar clan tienes habilitado el canal <#405031498496868372>, donde podrás ver clanes que buscan miembros y darte a conocer.\n\nAlternativamente, tienes https://www.mariokartcentral.com/mkc/teams dónde encontrarás también clanes de habla no hispana."
-            }
-          });
-         } else {
-           message.channel.send({
-            embed: {
-              color: config.color,
-              description: "¡Bienvenid@ al servidor comunitario de MK8DX, " + usuario + "!\n\nPor favor, pásate por <#405031085500792833> y por <#471360321504804894> para estar al corriente de cómo funciona el servidor."
-            }
-          });        
-         } 
-      }
+  if (command === "busco" && args.length <= 0) {  
+    var role = message.guild.roles.find(role => role.name === "busco-clan");
+    // maybe
+    if (message.member.roles.find(role => role.name === "busco-clan")) {
+      console.log("hey, it worked");
+      return;
     }
+    if(message.member.roles.has(role.id)){
+        message.member.removeRole(role);
+        message.channel.send({
+          embed: {
+            color: config.color,
+            description: "Se te ha quitado el rol de **busco-clan**."
+          }
+        });
+    } else {
+       message.member.addRole(role);
+       message.channel.send({
+          embed: {
+            color: config.color,
+            description: "Se te ha añadido el rol de **busco-clan**, ahora tienes acceso a <#405031498496868372>."
+          }
+        }); 
+    }      
+       
+  } 
+  
+  
+  if (command === "lakitu" && args.length <= 0) {       
     message.channel.send({
       embed: {
         color: config.color,
@@ -231,23 +267,23 @@ client.on('message', async message => {
           {
             "name": "Comandos generales",
             "value": "-"
-          },
+          }/*,
           {       
             "name": "Mostrar información general del clan",
             "value": "**!info** _clan_"
-          },
+          }*/,
           {
             "name": "Cómo dar de alta un clan",
             "value": "**!clan**"
-          },
+          }/*,
           {
             "name": "Bienvenida [restringido a moderadores]",
             "value": "**!h1** _@usuario_",
             "inline": true
-          },{
+          }*/,{
             "name": "_\n\nComandos de usuario",
             "value": "-"
-          },
+          }/*,
           {       
             "name": "Líderes de clan",
             "value": "**!rep** _@usuario_: Añadir o quitar reps del clan al que pertenece"
@@ -255,7 +291,7 @@ client.on('message', async message => {
           {
             "name": "Reps de clan",
             "value": "**!clan** _@usuario_: Añadir o quitar rol del clan al que pertenece"
-          },
+          }*/,
           {
             "name": "Todos los usuarios",
             "value": "**!busco** _@usuario_: Añadir o quitar el rol de @busco-clan",
