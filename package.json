@@ -1,7 +1,7 @@
 {
   "name": "Lakitu",
-  "version": "0.0.1",
-  "description": "Bot general de la CEMK",
+  "version": "1.0.0",
+  "description": "Bot general de la Comunidad Española de MK8D",
   "main": "node server.js",
   "scripts": {
     "start": "node server.js"
@@ -9,13 +9,16 @@
   "dependencies": {
     "express": "^4.16.4",
     "discord.js": "^11.4.2",
-    "http": "^0.0.0"
+    "discord.js-commando": "^0.10.0",
+    "http": "^0.0.0",
+    "chalk": "^2.4.1",
+    "path": "^0.12.7"
   },
   "engines": {
     "node": "8.x"
   },
   "repository": {
-    "url": "https://github.com/Qu4k3/"
+    "url": "https://github.com/Qu4k3/lakitu-mk"
   },
   "license": "MIT",
   "keywords": [

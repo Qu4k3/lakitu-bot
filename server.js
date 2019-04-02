@@ -32,6 +32,8 @@ const client = new Discord.Client();
 const guild = new Discord.Guild();
 const config = require("./config.json");
 
+// Everything beneath this comment is a mistake -puck  # :'c
+
 let prefix = config.prefix;
 
 client.on('ready', () => {
@@ -73,93 +75,6 @@ client.on('message', async message => {
     message.channel.send(':ping_pong: Latencia: `' + ping + ' ms.`');
   }
   
-  /*if (command === "rol" && args.length >= 1) {    
-        
-    let usuario = message.mentions.members.first();
-    console.log("valor de usuario:" + usuario)
-    console.log("valor de args:" + args)
-    
-    args.shift();
-    
-    console.log("valor de args despues de shift:" + args)
-    
-    
-    var roleTemp = args.join(' ');
-    console.log("valor de roleTemp:" + roleTemp)
-    
-    let role = message.member.roles.find('name', roleTemp);
-    
-    console.log("valor de role:" + role);
-    
-    if(message.member.roles.has(role.name)) {
-      /*if(){
-         message.channel.send({
-          embed: {
-            color: config.color,
-            description: "Rol `" + role + "` eliminado"
-          } 
-        }); 
-         }*/
-    /*} else {
-      message.channel.send({
-          embed: {
-            color: config.color,
-            description: "No dispones de ese rol"
-          } 
-        }); 
-    }    
-    
-  }*/
-  
-  /*if (command === "lista" && args.length >= 1) {    
-    var roleTemp = args.join(' ');
-    
-    console.log(roleTemp);
-    
-    let role = message.member.roles.find('name', roleTemp);   
-    
-    let imanity = message.guild.members.filter(member => {
-      return member.roles.find("name", role);
-    }).map(member => {
-      return member.user.username;
-    })*/
-    /*let seirens = message.guild.members.filter(member => {
-      return member.roles.find("name", "Seirens");
-    }).map(member => {
-      return member.user.username;
-    })
-    let werebeast = message.guild.members.filter(member => {
-      return member.roles.find("name", "Werebeast");
-    }).map(member => {
-      return member.user.username;
-    })*/
-    /*message.channel.send({
-      embed: {
-        "color": config.color,
-        "fields": [{
-            "name": "**Listado de miembros**",
-            "value": ":busts_in_silhouette: - " + (role.length),
-          },
-          {
-            "name": "Miembros - " + role.length,
-            "value": role.join("\n"),
-            "inline": true
-          }*//*,
-          {
-            "name": "Representantes - " + seirens.length,
-            "value": seirens.join("\n"),
-            "inline": true
-          },
-          {
-            "name": "Líder - " + werebeast.length,
-            "value": werebeast.join("\n"),
-            "inline": true
-          }*/
-        /*]
-      }
-    })
-  }*/
-  
   if (command === "clan" && args.length <= 0) {    
     message.channel.send({
       embed: {
@@ -171,11 +86,6 @@ client.on('message', async message => {
   
   if (command === "busco" && args.length <= 0) {  
     var role = message.guild.roles.find(role => role.name === "busco-clan");
-    // maybe
-    if (message.member.roles.find(role => role.name === "busco-clan")) {
-      console.log("hey, it worked");
-      return;
-    }
     if(message.member.roles.has(role.id)){
         message.member.removeRole(role);
         message.channel.send({
@@ -192,10 +102,8 @@ client.on('message', async message => {
             description: "Se te ha añadido el rol de **busco-clan**, ahora tienes acceso a <#405031498496868372>."
           }
         }); 
-    }      
-       
-  } 
-  
+    }       
+  }  
   
   if (command === "lakitu" && args.length <= 0) {       
     message.channel.send({
