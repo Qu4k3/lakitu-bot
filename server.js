@@ -2,18 +2,14 @@ const http = require('http');
 const express = require('express');
 const app = express();
 
-/* START HTTPS */
 function checkHttps(req, res, next){
-  // protocol check, if http, redirect to https  
   if(req.get('X-Forwarded-Proto').indexOf("https")!=-1){
     return next()
   } else {
     res.redirect('https://' + req.hostname + req.url);
   }
 }
-
 app.all('*', checkHttps);
-/* END HTTPS */
 
 app.use(express.static('public'));
 
@@ -31,35 +27,30 @@ setInterval(() => {
   http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
 }, 280000);
 
-// BOT
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const guild = new Discord.Guild();
 const config = require("./config.json");
 
+// Everything beneath this comment is a mistake -puck  # :'c
+
 let prefix = config.prefix;
 
 client.on('ready', () => {
   console.log('Lakitu iniciado');
-  /*client.user.setPresence({
-       status: "online",
-       game: {
-           name: "『 Disboard 』",
-           type: "PLAYING" // WATCHING
-       }
-   });*/
-  //client.user.setActivity('poner orden');
-
+  client.user.setPresence({
+       status: "online"       
+   });
+  client.user.setActivity('');
 });
 
 client.on("guildMemberAdd", (member) => {
-    let channel = client.channels.get('513088446886313995'); 
-  
+    let channel = client.channels.get('513088446886313995');   
     channel.send({
         embed: {
-            color: config.color,
-            description: "¡Bienvenid@ al servidor comunitario de MK8D, " + member.user + "!\n\nPor favor, pásate por <#405031085500792833> y por <#471360321504804894> para estar al corriente de cómo funciona el servidor."
-          }
+          color: config.color,
+          description: "¡Bienvenid@ al servidor comunitario de MK8D, " + member.user + "!\n\nPor favor, pásate por <#405031085500792833> y por <#471360321504804894> para estar al corriente de cómo funciona el servidor."
+        }
      }).then(msg => {
       channel.send({
         embed: {
@@ -84,144 +75,6 @@ client.on('message', async message => {
     message.channel.send(':ping_pong: Latencia: `' + ping + ' ms.`');
   }
   
-  /*if (command === "test" && args.length <= 0) {
-    let ping = Math.floor(message.client.ping);
-    message.channel.send({
-        embed: {
-            color: config.color,
-            description: "¡Bienvenid@ al servidor comunitario de MK8D, " + message.member + "!\n\nPor favor, pásate por <#405031085500792833> y por <#471360321504804894> para estar al corriente de cómo funciona el servidor."
-          }
-     });
-    
-    message.channel.send({
-        embed: {
-          color: config.color,
-          description: "Para buscar clan tienes habilitado el canal <#405031498496868372>, donde podrás ver clanes que buscan miembros y darte a conocer.\n\nAlternativamente, tienes https://www.mariokartcentral.com/mkc/teams dónde encontrarás también clanes de habla no hispana."
-        }
-      });
-  }*/
-  
-  if (command === "hi" && args.length == 1) {
-    
-    let usuario = message.mentions.members.first();
-    
-    if (message.member.roles.find("name", "Mods")) {
-        
-      if (usuario) {
-
-        if(usuario.roles.find("name", "sin-clan")) {
-           message.channel.send({
-            embed: {
-              color: config.color,
-              description: "¡Bienvenid@ al servidor comunitario de MK8DX, " + usuario + "!\n\nPor favor, pásate por <#405031085500792833> y por <#471360321504804894> para estar al corriente de cómo funciona el servidor."
-            }
-          });
-          message.channel.send({
-            embed: {
-              color: config.color,
-              description: "Para buscar clan tienes habilitado el canal <#405031498496868372>, donde podrás ver clanes que buscan miembros y darte a conocer.\n\nAlternativamente, tienes https://www.mariokartcentral.com/mkc/teams dónde encontrarás también clanes de habla no hispana."
-            }
-          });
-         } else {
-           message.channel.send({
-            embed: {
-              color: config.color,
-              description: "¡Bienvenid@ al servidor comunitario de MK8DX, " + usuario + "!\n\nPor favor, pásate por <#405031085500792833> y por <#471360321504804894> para estar al corriente de cómo funciona el servidor."
-            }
-          });        
-         } 
-      }
-    }
-    
-  }
-  
-  if (command === "rol" && args.length >= 1) {    
-        
-    let usuario = message.mentions.members.first();
-    console.log("valor de usuario:" + usuario)
-    console.log("valor de args:" + args)
-    
-    args.shift();
-    
-    console.log("valor de args despues de shift:" + args)
-    
-    
-    var roleTemp = args.join(' ');
-    console.log("valor de roleTemp:" + roleTemp)
-    
-    let role = message.member.roles.find('name', roleTemp);
-    
-    console.log("valor de role:" + role);
-    
-    if(message.member.roles.has(role.name)) {
-      /*if(){
-         message.channel.send({
-          embed: {
-            color: config.color,
-            description: "Rol `" + role + "` eliminado"
-          } 
-        }); 
-         }*/
-    } else {
-      message.channel.send({
-          embed: {
-            color: config.color,
-            description: "No dispones de ese rol"
-          } 
-        }); 
-    }    
-    
-  }
-  
-  if (command === "lista" && args.length >= 1) {    
-    var roleTemp = args.join(' ');
-    
-    console.log(roleTemp);
-    
-    let role = message.member.roles.find('name', roleTemp);   
-    
-    let imanity = message.guild.members.filter(member => {
-      return member.roles.find("name", role);
-    }).map(member => {
-      return member.user.username;
-    })
-    /*let seirens = message.guild.members.filter(member => {
-      return member.roles.find("name", "Seirens");
-    }).map(member => {
-      return member.user.username;
-    })
-    let werebeast = message.guild.members.filter(member => {
-      return member.roles.find("name", "Werebeast");
-    }).map(member => {
-      return member.user.username;
-    })*/
-    message.channel.send({
-      embed: {
-        "color": config.color,
-        "fields": [{
-            "name": "**Listado de miembros**",
-            "value": ":busts_in_silhouette: - " + (role.length),
-          },
-          {
-            "name": "Miembros - " + role.length,
-            "value": role.join("\n"),
-            "inline": true
-          }/*,
-          {
-            "name": "Representantes - " + seirens.length,
-            "value": seirens.join("\n"),
-            "inline": true
-          },
-          {
-            "name": "Líder - " + werebeast.length,
-            "value": werebeast.join("\n"),
-            "inline": true
-          }*/
-        ]
-      }
-    })
-  }
-  
   if (command === "clan" && args.length <= 0) {    
     message.channel.send({
       embed: {
@@ -233,11 +86,6 @@ client.on('message', async message => {
   
   if (command === "busco" && args.length <= 0) {  
     var role = message.guild.roles.find(role => role.name === "busco-clan");
-    // maybe
-    if (message.member.roles.find(role => role.name === "busco-clan")) {
-      console.log("hey, it worked");
-      return;
-    }
     if(message.member.roles.has(role.id)){
         message.member.removeRole(role);
         message.channel.send({
@@ -254,10 +102,8 @@ client.on('message', async message => {
             description: "Se te ha añadido el rol de **busco-clan**, ahora tienes acceso a <#405031498496868372>."
           }
         }); 
-    }      
-       
-  } 
-  
+    }       
+  }  
   
   if (command === "lakitu" && args.length <= 0) {       
     message.channel.send({
