@@ -17,6 +17,13 @@ Discord bot built to let team representatives some control over moderation actio
 - Discordjs - [site](https://discord.js.org)
 - Discord webhooks
 
+## Config
+
+**.env**
+```shell
+TOKEN= // discord bot token
+```
+
 ## Check status
 
-[http://lakitu-mk.glitch.me](http://lakitu-mk.glitch.me)
+[http://lakitu-mk.qk3.io](http://lakitu-mk.qk3.io)
