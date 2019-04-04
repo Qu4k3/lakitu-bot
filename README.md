@@ -29,4 +29,4 @@ TOKEN= // discord bot token
 
 ## Check status
 
-[http://lakitu-mk.qk3.io](http://lakitu-mk.qk3.io)
+[https://lakitu.qk3.io](https://lakitu.qk3.io)
