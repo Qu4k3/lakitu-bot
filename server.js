@@ -1,6 +1,7 @@
 const http = require('http');
 const express = require('express');
 const app = express();
+require('dotenv').config()
 
 function checkHttps(req, res, next){
   if(req.get('X-Forwarded-Proto').indexOf("https")!=-1){
