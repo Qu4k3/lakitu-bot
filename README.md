@@ -8,7 +8,7 @@
     <img width="250" height="300" src="https://cdn.discordapp.com/attachments/561938814063607823/563455570313609229/lakitu.png">
 </p>
 
-## About
+# Lakitu Bot
 
 Discord bot built to let team representatives have some control over moderation actions, and auto welcome message for new members.
 
@@ -23,10 +23,11 @@ Discord bot built to let team representatives have some control over moderation 
 ## Config
 
 **.env**
+
 ```shell
 TOKEN= // discord bot token
 ```
 
-## Check status
+### Check status
 
 [https://lakitu.qk3.io](https://lakitu.qk3.io)
