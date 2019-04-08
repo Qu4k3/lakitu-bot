@@ -1,7 +1,7 @@
 const http = require('http');
 const express = require('express');
 const app = express();
-require('dotenv').config()
+require('dotenv').config();
 
 function checkHttps(req, res, next){
   if(req.get('X-Forwarded-Proto').indexOf("https")!=-1){
@@ -76,7 +76,7 @@ client.on('message', async message => {
     message.channel.send(':ping_pong: Latencia: `' + ping + ' ms.`');
   }
   
-  if (command === "clan" && args.length <= 0) {    
+  if (command === "crearclan" && args.length <= 0) {    
     message.channel.send({
       embed: {
         color: config.colors.default,
@@ -107,8 +107,7 @@ client.on('message', async message => {
           }
         });
     } else {
-       message.member.removeRoles(roles);
-       message.member.addRole(role);
+       message.member.removeRoles(roles); // salvo miembros
        message.channel.send({
           embed: {
             color: config.colors.success,
@@ -123,7 +122,65 @@ client.on('message', async message => {
       });      
     });  
     }       
-  }  
+  } 
+  
+  if (command === "quitar" && args.length <= 0) {  
+    var mute = message.guild.roles.find(role => role.name === "mute");
+    var miembros = message.guild.roles.find(role => role.name === "Miembros");
+    var roles = message.member.roles
+    if(message.member.roles.has(mute.id)){
+        message.channel.send({
+          embed: {
+            color: config.colors.warning,
+            description: "El estado de **mute** no te permite usar este comando."
+          }
+        });
+    } else {
+       message.member.removeRoles(roles); // salvo miembros
+       message.channel.send({
+          embed: {
+            color: config.colors.success,
+            description: "Se te han quitado todos tus roles anteriores"
+          }
+        });  
+    }       
+  } 
+  
+  if (command === "mute" && args.length == 1) {  
+    if(message.member.roles.find(r => r.name === "Staff") || message.member.roles.find(r => r.name === "Mods")){
+      let mentioned = message.mentions.members.first();
+      
+      var mute = mentioned.guild.roles.find(role => role.name === "mute");
+      var miembros = mentioned.guild.roles.find(role => role.name === "Miembros");
+      
+      if(mentioned.roles.has(mute.id)){
+        mentioned.addRole(miembros);
+        mentioned.removeRole(mute);
+          message.channel.send({
+            embed: {
+              color: config.colors.default,
+              description: "Se te ha quitado el estado de **mute**, ya puedes escribir"
+            }
+          });
+      } else {
+         mentioned.addRole(mute);
+            mentioned.removeRole(miembros);
+            message.channel.send({
+              embed: {
+                color: config.colors.default,
+                description: "Pasas a tener estado de **mute**\nNo podrás escribir hasta que un moderador te lo quite"
+              }
+            });  
+        } 
+    }else {
+        message.channel.send({
+          embed: {
+            color: config.colors.warning,
+            description: "No tienes los permisos necesarios para usar este comando."
+          }
+        })
+      }
+  } 
   
   /* ----- COMANDO DE LIDER ----- */
   
@@ -136,7 +193,7 @@ client.on('message', async message => {
     if(!mentioned.roles.has(role.id)){
     
       if(message.member.roles.find(r => r.name === "Staff") || message.member.roles.find(r => r.name === "Mods")){
-          mentioned.addRoles(['562757330735726631', '562757372578234368']);
+          mentioned.addRoles(['562757330735726631', '562757372578234368']); // no funcional
           message.channel.send({
             embed: {
               color: config.colors.success,
@@ -147,7 +204,7 @@ client.on('message', async message => {
           message.channel.send({
             embed: {
               color: config.colors.warning,
-              description: "No tienes el rol necesario para usar este comando."
+              description: "No tienes los permisos necesarios para usar este comando."
             }
           })
         }
@@ -164,7 +221,7 @@ client.on('message', async message => {
           message.channel.send({
             embed: {
               color: config.colors.warning,
-              description: "No tienes el rol necesario para usar este comando."
+              description: "No tienes los permisos necesarios para usar este comando."
             }
           })
         }
@@ -210,7 +267,7 @@ client.on('message', async message => {
           message.channel.send({
             embed: {
               color: config.colors.warning,
-              description: "No tienes el rol necesario para usar este comando."
+              description: "No tienes los permisos necesarios para usar este comando."
             }
           })
         }
@@ -238,7 +295,7 @@ client.on('message', async message => {
           message.channel.send({
             embed: {
               color: config.colors.warning,
-              description: "No tienes el rol necesario para usar este comando."
+              description: "No tienes los permisos necesarios para usar este comando."
             }
           })
         }
@@ -252,26 +309,6 @@ client.on('message', async message => {
       embed: {
         color: config.colors.default,
         "fields": [
-          {
-            "name": "Comandos informativos",
-            "value": "-"
-          }/*,
-          {       
-            "name": "Mostrar información general del clan",
-            "value": "**!info** _clan_"
-          }*/,
-          {
-            "name": "Cómo dar de alta un clan",
-            "value": "**!clan**: Como dar de alta un clan"
-          }/*,
-          {
-            "name": "Bienvenida [restringido a moderadores]",
-            "value": "**!h1** _@usuario_",
-            "inline": true
-          }*/,{
-            "name": "_\n\nComandos de usuario",
-            "value": "-"
-          },
           {       
             "name": "Líderes de clan",
             "value": "**!rep** _@usuario_: Añadir o quitar reps del clan al que pertenece"
@@ -282,8 +319,7 @@ client.on('message', async message => {
           },
           {
             "name": "Todos los usuarios",
-            "value": "**!busco**: Añadir o quitar el rol de **busco-clan**",
-            "inline": true
+            "value": "**!busco**: Añadir o quitar el rol de **busco-clan**, añadirlo implica quitarse el rol de clan.\n**!quitar**: Quita todos los roles actuales.",
           }
         ]
       }
