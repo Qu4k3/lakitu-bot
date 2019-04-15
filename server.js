@@ -45,8 +45,10 @@ client.on('ready', () => {
   client.user.setActivity('');
 });
 
+  /* ---------- AUTO BIENVENIDA ---------- */
+
 client.on("guildMemberAdd", (member) => {
-    let channel = client.channels.get('405023265375911936');   // 405023265375911936 513088446886313995
+    let channel = client.channels.get('565211101457940491');   // 405023265375911936 513088446886313995
     channel.send("¡Bienvenid@ al servidor comunitario de MK8D, <@" + member.id + ">!",{
         embed: {
           color: config.colors.default,
@@ -71,10 +73,14 @@ client.on('message', async message => {
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
 
+  /* ---------- !PING ---------- */
+
   if (command === "ping" && args.length <= 0) {
     let ping = Math.floor(message.client.ping);
     message.channel.send(':ping_pong: Latencia: `' + ping + ' ms.`');
   }
+  
+  /* ---------- !CREARCLAN ---------- */
   
   if (command === "crearclan" && args.length <= 0) {    
     message.channel.send({
@@ -85,18 +91,16 @@ client.on('message', async message => {
     });     
   }
   
+  /* ---------- !BUSCO ---------- */
+  
   if (command === "busco" && args.length <= 0) {  
     var role = message.guild.roles.find(role => role.name === "busco-clan");
+    var miembros = message.guild.roles.find(role => role.name === "Miembros");
     var roles = message.member.roles
-    // console.log("roles de usuario - " + roles)
     
-    /*var value = '562629331415728139'
-
     roles = roles.filter(function(item) { 
-        return item !== value
-    })*/
-
-    // console.log("filtrado - " + roles)
+        return item !== miembros
+    })
     
     if(message.member.roles.has(role.id)){
       message.member.removeRole(role);
@@ -107,6 +111,7 @@ client.on('message', async message => {
           }
         });
     } else {
+       message.member.addRole(role);
        message.member.removeRoles(roles); // salvo miembros
        message.channel.send({
           embed: {
@@ -117,17 +122,24 @@ client.on('message', async message => {
       message.channel.send({
         embed: {
           color: config.colors.default,
-          description: "Se han quitado los siguientes roles: " + roles.id
+          description: "Se han quitado tus roles anteriores"
         }
       });      
     });  
     }       
   } 
   
+  /* ---------- !QUITAR ---------- */
+  
   if (command === "quitar" && args.length <= 0) {  
     var mute = message.guild.roles.find(role => role.name === "mute");
     var miembros = message.guild.roles.find(role => role.name === "Miembros");
     var roles = message.member.roles
+    
+    roles = roles.filter(function(item) { 
+        return item !== miembros
+    })
+    
     if(message.member.roles.has(mute.id)){
         message.channel.send({
           embed: {
@@ -136,7 +148,7 @@ client.on('message', async message => {
           }
         });
     } else {
-       message.member.removeRoles(roles); // salvo miembros
+       message.member.removeRoles(roles);
        message.channel.send({
           embed: {
             color: config.colors.success,
@@ -145,6 +157,8 @@ client.on('message', async message => {
         });  
     }       
   } 
+  
+  /* ---------- !MUTE ---------- */
   
   if (command === "mute" && args.length == 1) {  
     if(message.member.roles.find(r => r.name === "Staff") || message.member.roles.find(r => r.name === "Mods")){
@@ -168,7 +182,7 @@ client.on('message', async message => {
             message.channel.send({
               embed: {
                 color: config.colors.default,
-                description: "Pasas a tener estado de **mute**\nNo podrás escribir hasta que un moderador te lo quite"
+                description: "<@" + mentioned.id + ">, pasas a tener estado de **mute**\nNo podrás escribir hasta que un moderador te lo quite"
               }
             });  
         } 
@@ -182,18 +196,21 @@ client.on('message', async message => {
       }
   } 
   
-  /* ----- COMANDO DE LIDER ----- */
+  /* ---------- !LIDER ---------- */
   
   if (command === "lider" && args.length == 1) { 
     
-    var role = message.guild.roles.find(role => role.name === "Lider");
+    var lider = message.guild.roles.find(role => role.name === "Lider");
+    var rep = message.guild.roles.find(role => role.name === "Representantes de clan");
     
     let mentioned = message.mentions.members.first();
     
-    if(!mentioned.roles.has(role.id)){
+    var lidRepArray = ['464068391758462978', '405031301419368459'];
+    
+    if(!mentioned.roles.has(lider.id)){
     
       if(message.member.roles.find(r => r.name === "Staff") || message.member.roles.find(r => r.name === "Mods")){
-          mentioned.addRoles(['562757330735726631', '562757372578234368']); // no funcional
+          mentioned.addRoles(lidRepArray);
           message.channel.send({
             embed: {
               color: config.colors.success,
@@ -210,7 +227,7 @@ client.on('message', async message => {
         }
     } else {
       if(message.member.roles.find(r => r.name === "Staff") || message.member.roles.find(r => r.name === "Mods")){
-          mentioned.removeRoles(['562757330735726631', '562757372578234368']);
+          mentioned.removeRoles(lidRepArray);
           message.channel.send({
             embed: {
               color: config.colors.success,
@@ -228,37 +245,45 @@ client.on('message', async message => {
     }
   }
   
-  /* ----- COMANDO DE REP ----- */
+  /* ---------- !REP ---------- */
   
   if (command === "rep" && args.length == 1) { 
     
-    var role = message.guild.roles.find(role => role.name === "Representantes de clan");
+    var rep = message.guild.roles.find(role => role.name === "Representantes de clan");
+    var lider = message.guild.roles.find(role => role.name === "Lider");
+    var miembros = message.guild.roles.find(role => role.name === "Miembros");
+    var busco = message.guild.roles.find(role => role.name === "busco-clan");    
     
     let mentioned = message.mentions.members.first();
     
-    if(!mentioned.roles.has(role.id)){
+    var roles = mentioned.roles
+    /*
+    var clan = roles.filter(function(item) { 
+        return item.id !== (miembros || lider || rep || busco)
+    })
+    
+    console.log(clan)
+    
+    var maxRep = clan.filter(member => { 
+        return member.roles.find(clan.id);
+    }).map(member => {
+        return member.user.username;
+    }) */   
+    
+    if(!mentioned.roles.has(rep.id)){
     
       if(message.member.roles.find(r => r.name === "Staff") || message.member.roles.find(r => r.name === "Mods") || message.member.roles.find(r => r.name === "Lider")){
-          mentioned.addRole(role).then(
+          mentioned.addRole(rep).then(
           message.channel.send({
             embed: {
               color: config.colors.success,
               description: "Se ha añadido el rol de **Representantes de clan** a <@" + mentioned.id + ">."
             }
-          })
-          /*.then(msg => {
-              message.channel.send({
-                embed: {
-                  color: config.colors.info,
-                  description: "Ahora puedes usar el comando **!clan _@usuario_**"
-                }
-              });  
-            })*/
-          /*.then(msg => {
+          })/*.then(msg => {
               message.channel.send({
                 embed: {
                   color: config.colors.default,
-                  description: "Representantes actuales del clan: **array.length / 3**"
+                  description: "Representantes actuales del clan: " + maxRep.join("\n")
                 }
               });      
             })*/
@@ -275,7 +300,7 @@ client.on('message', async message => {
     } else {
       
       if(message.member.roles.find(r => r.name === "Staff") || message.member.roles.find(r => r.name === "Mods") || message.member.roles.find(r => r.name === "Lider")){
-          mentioned.removeRole(role).then(
+          mentioned.removeRole(rep).then(
           message.channel.send({
             embed: {
               color: config.colors.success,
@@ -303,6 +328,78 @@ client.on('message', async message => {
     }
       
   }
+  
+  /* ---------- !CLAN ---------- */
+  
+  if (command === "clan" && args.length == 1) { 
+    
+    var rep = message.guild.roles.find(role => role.name === "Representantes de clan");
+    var lider = message.guild.roles.find(role => role.name === "Lider");
+    var miembros = message.guild.roles.find(role => role.name === "Miembros");
+    var busco = message.guild.roles.find(role => role.name === "busco-clan");    
+    
+    let mentioned = message.mentions.members.first();
+    
+    lider, rep, "rol de clan", miembros, busco-clan
+    
+    var repRoles = message.roles
+    var mentionedRoles = mentioned.roles
+    
+    var clan = repRoles.filter(function(item) { 
+        return item !== miembros +"‌‌ "
+    })
+    
+    var clan = mentionedRoles.filter(function(item) { 
+        return item !== miembros
+    })
+    
+    console.log(clan) 
+    
+    if(!mentioned.roles.has(rep.id)){
+    
+      if(message.member.roles.find(r => r.name === "Staff") || message.member.roles.find(r => r.name === "Mods") || message.member.roles.find(r => r.name === "Lider") || message.member.roles.find(r => r.name === "Representantes de clan")){
+          mentioned.addRole(clan).then(
+            message.channel.send({
+              embed: {
+                color: config.colors.success,
+                description: "Se ha añadido el rol de <@" + clan.id + "> a <@" + mentioned.id + ">."
+              }
+            })
+          )
+        } else {
+          message.channel.send({
+            embed: {
+              color: config.colors.warning,
+              description: "No tienes los permisos necesarios para usar este comando."
+            }
+          })
+        }
+      
+    } else {
+      
+      if(message.member.roles.find(r => r.name === "Staff") || message.member.roles.find(r => r.name === "Mods") || message.member.roles.find(r => r.name === "Lider") || message.member.roles.find(r => r.name === "Representantes de clan")){
+          mentioned.removeRole(rep).then(
+            message.channel.send({
+              embed: {
+                color: config.colors.success,
+                description: "Se ha eliminado el rol de <@" + clan.id + "> a <@" + mentioned.id + ">."
+              }
+            })
+          )
+        } else {
+          message.channel.send({
+            embed: {
+              color: config.colors.warning,
+              description: "No tienes los permisos necesarios para usar este comando."
+            }
+          })
+        }
+      
+    }
+      
+  }
+  
+  /* ---------- !LAKITU ---------- */
   
   if (command === "lakitu" && args.length <= 0) {       
     message.channel.send({
