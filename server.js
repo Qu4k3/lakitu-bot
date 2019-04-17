@@ -35,7 +35,7 @@ const config = require("./config.json");
 
 // Everything beneath this comment is a mistake -puck  # :'c
 
-let prefix = config.prefix;
+var prefix = config.prefix;
 
 client.on('ready', () => {
   console.log('Lakitu iniciado');
@@ -252,23 +252,31 @@ client.on('message', async message => {
     var rep = message.guild.roles.find(role => role.name === "Representantes de clan");
     var lider = message.guild.roles.find(role => role.name === "Lider");
     var miembros = message.guild.roles.find(role => role.name === "Miembros");
-    var busco = message.guild.roles.find(role => role.name === "busco-clan");    
+    var busco = message.guild.roles.find(role => role.name === "busco-clan"); 
+    var staff = message.guild.roles.find(role => role.name === "Staff"); 
+    var mods = message.guild.roles.find(role => role.name === "Mods"); 
+    var everyone = message.guild.roles.find(role => role.name === "@everyone");  
+    var delta = message.guild.roles.find(role => role.name === "Δ");    
     
     let mentioned = message.mentions.members.first();
     
     var roles = mentioned.roles
-    /*
-    var clan = roles.filter(function(item) { 
-        return item.id !== (miembros || lider || rep || busco)
+    
+    var repRoles = message.member.roles;
+    var mentionedRoles = mentioned.roles;
+    var evadeRoles = [rep, lider, miembros, busco, staff, mods, everyone, delta];
+    
+    const clan = repRoles.filter(function(item) { 
+        return evadeRoles.indexOf(item) === -1;
     })
     
-    console.log(clan)
+    var clanRole = clan.find(role => role.name); 
     
-    var maxRep = clan.filter(member => { 
-        return member.roles.find(clan.id);
+    let membersWithRole = message.guild.members.filter(member => { 
+        return member.roles.find("name", clanRole);
     }).map(member => {
         return member.user.username;
-    }) */   
+    })   
     
     if(!mentioned.roles.has(rep.id)){
     
@@ -279,14 +287,14 @@ client.on('message', async message => {
               color: config.colors.success,
               description: "Se ha añadido el rol de **Representantes de clan** a <@" + mentioned.id + ">."
             }
-          })/*.then(msg => {
+          }).then(msg => {
               message.channel.send({
                 embed: {
                   color: config.colors.default,
-                  description: "Representantes actuales del clan: " + maxRep.join("\n")
+                  description: "Representantes actuales del clan: " + membersWithRole.join("\n")
                 }
               });      
-            })*/
+            })
           )
         } else {
           message.channel.send({
@@ -306,15 +314,14 @@ client.on('message', async message => {
               color: config.colors.success,
               description: "Se ha eliminado el rol de **Representantes de clan** a <@" + mentioned.id + ">."
             }
-          })
-          /*.then(msg => {
+          }).then(msg => {
               message.channel.send({
                 embed: {
                   color: config.colors.default,
-                  description: "Representantes actuales del clan: **array.length / 3**"
+                  description: "Representantes actuales del clan: " + membersWithRole.join("\n")
                 }
               });      
-            })*/
+            })
           )
         } else {
           message.channel.send({
@@ -336,33 +343,37 @@ client.on('message', async message => {
     var rep = message.guild.roles.find(role => role.name === "Representantes de clan");
     var lider = message.guild.roles.find(role => role.name === "Lider");
     var miembros = message.guild.roles.find(role => role.name === "Miembros");
-    var busco = message.guild.roles.find(role => role.name === "busco-clan");    
+    var busco = message.guild.roles.find(role => role.name === "busco-clan"); 
+    var staff = message.guild.roles.find(role => role.name === "Staff"); 
+    var mods = message.guild.roles.find(role => role.name === "Mods"); 
+    var everyone = message.guild.roles.find(role => role.name === "@everyone");  
+    var delta = message.guild.roles.find(role => role.name === "Δ");    
     
-    let mentioned = message.mentions.members.first();
+    var mentioned = message.mentions.members.first();
     
-    lider, rep, "rol de clan", miembros, busco-clan
+    var repRoles = message.member.roles;
+    var mentionedRoles = mentioned.roles;
+    var evadeRoles = [rep, lider, miembros, busco, staff, mods, everyone, delta];
     
-    var repRoles = message.roles
-    var mentionedRoles = mentioned.roles
-    
-    var clan = repRoles.filter(function(item) { 
-        return item !== miembros +"‌‌ "
+    const clanRep = repRoles.filter(function(item) { 
+        return evadeRoles.indexOf(item) === -1;
     })
     
-    var clan = mentionedRoles.filter(function(item) { 
-        return item !== miembros
+    const clanMentioned = mentionedRoles.filter(function(item) { 
+        return evadeRoles.indexOf(item) === -1;
     })
     
-    console.log(clan) 
+    var clanRole = clanRep.find(role => role.id);    
+    var clanRoleMentioned = clanMentioned.find(role => role.id);    
     
-    if(!mentioned.roles.has(rep.id)){
+    if(clanRole == clanRoleMentioned){
     
-      if(message.member.roles.find(r => r.name === "Staff") || message.member.roles.find(r => r.name === "Mods") || message.member.roles.find(r => r.name === "Lider") || message.member.roles.find(r => r.name === "Representantes de clan")){
-          mentioned.addRole(clan).then(
+      if(message.member.roles.find(r => r.name === "Staff") || message.member.roles.find(r => r.name === "Mods") ||         message.member.roles.find(r => r.name === "Representantes de clan")){
+        mentioned.removeRoles([clanRoleMentioned, lider, rep]).then(
             message.channel.send({
               embed: {
                 color: config.colors.success,
-                description: "Se ha añadido el rol de <@" + clan.id + "> a <@" + mentioned.id + ">."
+                description: "Se ha eliminado el rol de " + clanRole + " a <@" + mentioned.id + ">."
               }
             })
           )
@@ -377,15 +388,35 @@ client.on('message', async message => {
       
     } else {
       
-      if(message.member.roles.find(r => r.name === "Staff") || message.member.roles.find(r => r.name === "Mods") || message.member.roles.find(r => r.name === "Lider") || message.member.roles.find(r => r.name === "Representantes de clan")){
-          mentioned.removeRole(rep).then(
+      if(message.member.roles.find(r => r.name === "Staff") || message.member.roles.find(r => r.name === "Mods") ||         message.member.roles.find(r => r.name === "Representantes de clan")){        
+        
+        if(clanRoleMentioned !== null){          
+          mentioned.removeRole(clanRoleMentioned)
+            mentioned.addRole(clanRole).then(
             message.channel.send({
               embed: {
                 color: config.colors.success,
-                description: "Se ha eliminado el rol de <@" + clan.id + "> a <@" + mentioned.id + ">."
+                description: "Se ha añadido el rol de " + clanRole + " a <@" + mentioned.id + ">."
               }
             })
-          )
+          ).then ( 
+            message.channel.send({
+              embed: {
+                color: config.colors.default,
+                description: "Se ha eliminado el rol de " + clanRoleMentioned
+              }
+            })
+            ) } else {
+          mentioned.addRole(clanRole).then(
+            message.channel.send({
+              embed: {
+                color: config.colors.success,
+                description: "Se ha añadido el rol de " + clanRole + " a <@" + mentioned.id + ">."
+              }
+            })
+          )    
+              
+            }
         } else {
           message.channel.send({
             embed: {
@@ -416,7 +447,7 @@ client.on('message', async message => {
           },
           {
             "name": "Todos los usuarios",
-            "value": "**!busco**: Añadir o quitar el rol de **busco-clan**, añadirlo implica quitarse el rol de clan.\n**!quitar**: Quita todos los roles actuales.",
+            "value": "**!busco**: Añadir o quitar el rol de **busco-clan**, añadirlo implica quitarse el rol de clan.\n**!quitar**: Quita todos los roles actuales."
           }
         ]
       }
