@@ -123,7 +123,7 @@ client.on('message', async message => {
       // console.info( arrWaiting );
        var index = arrWaiting.findIndex(arrWaiting => arrWaiting === message.author.id);
       
-       message.channel.send({embed: {color: config.colors.warning, description: "Espera 2 horas antes de volver a usar este comando. Podrás volver a usarlo a las: " + arrWaiting[index+1]}})
+       message.channel.send({embed: {color: config.colors.warning, description: "Espera 2 horas antes de volver a usar este comando.\nPodrás volver a usarlo a las: " + arrWaiting[index+1]}})
     } else {
       
     const rep = message.guild.roles.find(role => role.name === "Representantes de clan");
@@ -358,13 +358,24 @@ client.on('message', async message => {
     })
 
     var clanRole = clanRep.find(role => role.id);
-    var clanRoleMentioned = clanMentioned.find(role => role.id);
+    var clanRoleMentioned = clanMentioned.find(role => role.id);    
+    
+    if (clanRoleMentioned == null) {
+      message.channel.send({
+              embed: {
+                color: config.colors.danger,
+                description: "El usuario debe tener clan antes de poder asignarle el rol de rep."
+              }
+            })
+      
+    }
     
     var membersWithRole = message.guild.members.filter(member => {
       return member.roles.has(clanRoleMentioned.id) && member.roles.has(rep.id);
     }).map(member => {
       return member.user.username;
     }) 
+    
 
     if (!mentioned.roles.has(rep.id)) {
 
@@ -505,7 +516,7 @@ client.on('message', async message => {
       // console.info( arrWaiting );
        var index = arrWaiting.findIndex(arrWaiting => arrWaiting === message.author.id);
       
-       message.channel.send({embed: {color: config.colors.warning, description: "Espera 2 horas antes de volver a usar este comando. Podrás volver a usarlo a las: " + arrWaiting[index+1]}})
+       message.channel.send({embed: {color: config.colors.warning, description: "Espera 2 horas antes de volver a usar este comando.\nPodrás volver a usarlo a las: " + arrWaiting[index+1]}})
     } else {
 
 
@@ -576,28 +587,19 @@ client.on('message', async message => {
             message.channel.send({
               embed: {
                 color: config.colors.success,
-                description: "Se ha añadido el rol de " + clanRole + " a <@" + mentioned.id + ">."
+                description: "Se ha añadido el rol de " + clanRole + " a <@" + mentioned.id + "> y eliminado el de " + clanRoleMentioned
               }
             }
-          ).then(
-            message.channel.send({
-              embed: {
-                color: config.colors.default,
-                description: "Se ha eliminado el rol de " + clanRoleMentioned
-              }
-            })
           )
         } else {
           mentioned.removeRole(busco).then(
-          mentioned.addRole(clanRole)).then(
+          mentioned.addRole(clanRole))
             message.channel.send({
               embed: {
                 color: config.colors.success,
                 description: "Se ha añadido el rol de " + clanRole + " a <@" + mentioned.id + ">."
               }
-            })
-          )
-
+            }) 
         }
       } else {
         message.channel.send({
@@ -631,7 +633,7 @@ client.on('message', async message => {
       // console.info( arrWaiting );
        var index = arrWaiting.findIndex(arrWaiting => arrWaiting === message.author.id);
       
-       message.channel.send({embed: {color: config.colors.warning, description: "Espera 2 horas antes de volver a usar este comando. Podrás volver a usarlo a las: " + arrWaiting[index+1]}})
+       message.channel.send({embed: {color: config.colors.warning, description: "Espera 2 horas antes de volver a usar este comando.\nPodrás volver a usarlo a las: " + arrWaiting[index+1]}})
     } else {
 
     const rep = message.guild.roles.find(role => role.name === "Representantes de clan");
@@ -750,6 +752,85 @@ client.on('message', async message => {
       }
     )
   }
+  
+  /* ---------- !INFO ---------- */
+
+  if (command === "info" && args.length <= 0) {
+
+    const rep = message.guild.roles.find(role => role.name === "Representantes de clan");
+    const lider = message.guild.roles.find(role => role.name === "Lider");
+    const miembros = message.guild.roles.find(role => role.name === "Miembros");
+    const busco = message.guild.roles.find(role => role.name === "busco-clan");
+    const staff = message.guild.roles.find(role => role.name === "Staff");
+    const mods = message.guild.roles.find(role => role.name === "Mods");
+    const everyone = message.guild.roles.find(role => role.name === "@everyone");
+    const delta = message.guild.roles.find(role => role.name === "Δ");
+
+    var roles = message.member.roles;
+    var evadeRoles = [rep, lider, miembros, busco, staff, mods, everyone, delta];    
+
+    if (message.member.roles.find(r => r.name === "Representantes de clan")) {
+      const clan = roles.filter(function (item) {
+      return evadeRoles.indexOf(item) === -1;
+    })
+
+    var clanRole = clan.find(role => role.id); 
+    var clanRoleName = clan.find(role => role.name); 
+    
+    var membersWithRole = message.guild.members.filter(member => {
+      return member.roles.has(clanRole.id)
+    }).map(member => {
+      return member.user.username;
+    })
+    
+    var membersWithRoleRep = message.guild.members.filter(member => {
+      return member.roles.has(clanRole.id) && member.roles.has(rep.id);
+    }).map(member => {
+      return member.user.username;
+    })
+    
+    var membersWithRoleLider = message.guild.members.filter(member => {
+      return member.roles.has(clanRole.id) && member.roles.has(lider.id);
+    }).map(member => {
+      return member.user.username;
+    })
+    
+        message.channel.send({
+      embed: {
+        "color": config.colors.default,
+        "fields": [{
+            "name": "Estado de " + clanRoleName.name,
+            "value": "	󠇰	󠇰",
+          },
+          {
+            "name": "Líder - " + membersWithRoleLider.length,
+            "value": membersWithRoleLider.join("\n"),
+            "inline": true
+          },
+          {
+            "name": "Reps - " + membersWithRoleRep.length,
+            "value": membersWithRoleRep.join("\n"),
+            "inline": true
+          },
+          {
+            "name": "Miembros - " + membersWithRole.length,
+            "value": membersWithRole.join("\n"),
+            "inline": true
+          }
+        ]
+      }})
+    } else {
+      message.channel.send({
+        embed: {
+          color: config.colors.warning,
+          description: "No tienes los permisos necesarios para usar este comando."
+        }
+      })
+    }
+
+  }
+
+
 
   /* ---------- !LAKITU ---------- */
 
@@ -763,7 +844,7 @@ client.on('message', async message => {
           },
           {
             "name": "-\nReps de clan",
-            "value": "**!clan** _@usuario_: Añadir o quitar rol del clan al que pertenece.\n**!clan** _@usuario_ _@usuario_ _@usuario_... : Añadir o quitar rol del clan a varios usuarios a la vez (hasta 5)."
+            "value": "**!clan** _@usuario_: Añadir o quitar rol del clan al que pertenece.\n**!clan** _@usuario_ _@usuario_ _@usuario_... : Añadir o quitar rol del clan a varios usuarios a la vez (hasta 5).\n**!info**: Información extra acerca del clan."
           },
           {
             "name": "-\nTodos los usuarios",
