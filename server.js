@@ -52,7 +52,8 @@ Date.prototype.addHours = function(h){
     return this;
 }
 
-const talkedRecently = new Set();
+const usadoClan = new Set();
+const usadoBusco = new Set();
 
 function getTime() {
   var nextAvailability = new Date().addHours(2+2);
@@ -65,7 +66,7 @@ function getTime() {
   return nextH + ":" + nextM + ":" + nextS; 
 }
 
-const timeWaiting = 7200000;
+const timeWaiting = 7200000; // 2 horas
 
 /* ---------- AUTO BIENVENIDA ---------- */
 
@@ -116,6 +117,15 @@ client.on('message', async message => {
   /* ---------- !BUSCO ---------- */
 
   if (command === "busco" && args.length <= 0) {
+    
+    if (usadoBusco.has(message.author.id)) {
+      var arrWaiting = [ ...usadoBusco ]; 
+      // console.info( arrWaiting );
+       var index = arrWaiting.findIndex(arrWaiting => arrWaiting === message.author.id);
+      
+       message.channel.send({embed: {color: config.colors.warning, description: "Espera 2 horas antes de volver a usar este comando. Podrás volver a usarlo a las: " + arrWaiting[index+1]}})
+    } else {
+      
     const rep = message.guild.roles.find(role => role.name === "Representantes de clan");
     const lider = message.guild.roles.find(role => role.name === "Lider");
     const miembros = message.guild.roles.find(role => role.name === "Miembros");
@@ -139,8 +149,8 @@ client.on('message', async message => {
         }
       });
     } else {
-      message.member.addRole(busco).then(
-        message.member.removeRoles(roles))
+        message.member.removeRoles(roles).then(
+          message.member.addRole(busco))
       message.channel.send({
         embed: {
           color: config.colors.success,
@@ -154,6 +164,14 @@ client.on('message', async message => {
           }
         });
       });
+    }
+      
+      // Adds the user to the set so that they can't talk for a X time
+      usadoBusco.add(message.author.id).add(getTime());
+        setTimeout(() => {
+          // Removes the user from the set after a X time
+          usadoBusco.delete(message.author.id);
+        }, timeWaiting);
     }
   }
 
@@ -410,15 +428,7 @@ client.on('message', async message => {
                 });
               })
             )
-          }else {
-          message.channel.send({
-            embed: {
-              color: config.colors.warning,
-              description: "Los dos debeis estar en el mismo clan"
-            }
-          })
-        }
-        } else {
+          }  else {
           message.channel.send({
             embed: {
               color: config.colors.warning,
@@ -432,7 +442,15 @@ client.on('message', async message => {
               }
             })
           );
+        } }else {
+          message.channel.send({
+            embed: {
+              color: config.colors.warning,
+              description: "Los dos debeis estar en el mismo clan"
+            }
+          })
         }
+        
       } else {
         message.channel.send({
           embed: {
@@ -482,8 +500,8 @@ client.on('message', async message => {
 
   if (command === "clan" && args.length == 1) {
     
-    if (talkedRecently.has(message.author.id)) {
-      var arrWaiting = [ ...talkedRecently ]; 
+    if (usadoClan.has(message.author.id)) {
+      var arrWaiting = [ ...usadoClan ]; 
       // console.info( arrWaiting );
        var index = arrWaiting.findIndex(arrWaiting => arrWaiting === message.author.id);
       
@@ -520,7 +538,8 @@ client.on('message', async message => {
     if (clanRole == clanRoleMentioned) {
 
       if (message.member.roles.find(r => r.name === "Staff") || message.member.roles.find(r => r.name === "Mods") || message.member.roles.find(r => r.name === "Representantes de clan")) {
-        mentioned.removeRoles([clanRoleMentioned, rep, lider]).then(
+        if(mentioned !== message.member){
+           mentioned.removeRoles([clanRoleMentioned, rep, lider]).then(
           message.channel.send({
             embed: {
               color: config.colors.success,
@@ -528,6 +547,16 @@ client.on('message', async message => {
             }
           })
         )
+           } else {
+             
+          message.channel.send({
+            embed: {
+              color: config.colors.success,
+              description: "No puedes quitarte el rol de clan siendo representante, usa `!quitar` en su lugar."
+            }
+          })
+        
+           }
       } else {
         message.channel.send({
           embed: {
@@ -582,10 +611,10 @@ client.on('message', async message => {
     }
       
       // Adds the user to the set so that they can't talk for a X time
-      talkedRecently.add(message.author.id).add(getTime());
+      usadoClan.add(message.author.id).add(getTime());
         setTimeout(() => {
           // Removes the user from the set after a X time
-          talkedRecently.delete(message.author.id);
+          usadoClan.delete(message.author.id);
         }, timeWaiting);
     }
       
@@ -597,8 +626,8 @@ client.on('message', async message => {
   if (command === "clan" && args.length > 1 && args.length <= 5) {
     
         
-    if (talkedRecently.has(message.author.id)) {
-      var arrWaiting = [ ...talkedRecently ]; 
+    if (usadoClan.has(message.author.id)) {
+      var arrWaiting = [ ...usadoClan ]; 
       // console.info( arrWaiting );
        var index = arrWaiting.findIndex(arrWaiting => arrWaiting === message.author.id);
       
@@ -637,7 +666,8 @@ client.on('message', async message => {
     if (clanRole == clanRoleMentioned) {
 
       if (message.member.roles.find(r => r.name === "Staff") || message.member.roles.find(r => r.name === "Mods") || message.member.roles.find(r => r.name === "Representantes de clan")) {
-        mentioned.removeRoles([clanRoleMentioned, rep, lider]).then(
+        if(mentioned !== message.member){
+           mentioned.removeRoles([clanRoleMentioned, rep, lider]).then(
           message.channel.send({
             embed: {
               color: config.colors.success,
@@ -645,6 +675,15 @@ client.on('message', async message => {
             }
           })
         )
+           } else {
+             
+          message.channel.send({
+            embed: {
+              color: config.colors.success,
+              description: "No puedes quitarte el rol de clan siendo representante, usa `!quitar` en su lugar."
+            }
+          })
+           }
       } else {
         message.channel.send({
           embed: {
@@ -693,10 +732,10 @@ client.on('message', async message => {
     });  
     
       // Adds the user to the set so that they can't talk for a X time
-      talkedRecently.add(message.author.id);
+      usadoClan.add(message.author.id);
         setTimeout(() => {
           // Removes the user from the set after a X time
-          talkedRecently.delete(message.author.id);
+          usadoClan.delete(message.author.id);
         }, timeWaiting);
     }
 
@@ -724,11 +763,11 @@ client.on('message', async message => {
           },
           {
             "name": "-\nReps de clan",
-            "value": "**!clan** _@usuario_: Añadir o quitar rol del clan al que pertenece.\n**!clan** _@usuario_ _@usuario_ _@usuario_ ...: Añadir o quitar rol del clan a varios usuarios a la vez (hasta 5)."
+            "value": "**!clan** _@usuario_: Añadir o quitar rol del clan al que pertenece.\n**!clan** _@usuario_ _@usuario_ _@usuario_... : Añadir o quitar rol del clan a varios usuarios a la vez (hasta 5)."
           },
           {
             "name": "-\nTodos los usuarios",
-            "value": "**!busco**: Añadir o quitar el rol de **busco-clan**, añadirlo implica quitarse el rol de clan.\n**!quitar**: Quita todos los roles actuales (excepto miembros)."
+            "value": "**!busco**: Añadir o quitar el rol de **busco-clan**, añadirlo implica quitarse los roles anteriores.\n**!quitar**: Quita todos los roles actuales (excepto miembros)."
           }
         ]
       }
