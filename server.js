@@ -137,8 +137,10 @@ client.on('message', async message => {
     var roles = message.member.roles
 
     roles = roles.filter(function (item) {
-      return item !== miembros && item !== everyone && item !== busco && item !== staff && item !== mods && item !== delta && item !== rep
+      return item !== miembros && item !== busco && item !== everyone
     })
+    
+    var clanRole = roles.find(role => role.id);
 
     if (message.member.roles.has(busco.id)) {
       message.member.removeRole(busco);
@@ -148,22 +150,27 @@ client.on('message', async message => {
           description: "Se te ha quitado el rol de **busco-clan**."
         }
       });
-    } else {
-        message.member.removeRoles(roles).then(
-          message.member.addRole(busco))
+    } else if(clanRole != null) {
+
+          message.member.addRole(busco).then(
+      message.member.removeRoles(roles))
       message.channel.send({
         embed: {
           color: config.colors.success,
-          description: "Se te ha añadido el rol de **busco-clan**, ahora tienes acceso a <#405031498496868372>."
+          description: "Se te ha añadido el rol de **busco-clan** y quitado los roles anteriores.\nAhora tienes acceso a <#405031498496868372>."
         }
-      }).then(msg => {
-        message.channel.send({
-          embed: {
-            color: config.colors.default,
-            description: "Además, se te han quitado tus roles anteriores (si tenías)."
-          }
-        });
-      });
+      })
+          
+    } else {
+      
+      message.member.addRole(busco)
+      message.channel.send({
+        embed: {
+          color: config.colors.success,
+          description: "Se te ha añadido el rol de **busco-clan**. Ahora tienes acceso a <#405031498496868372>."
+        }
+      })
+
     }
       
       // Adds the user to the set so that they can't talk for a X time
@@ -799,7 +806,7 @@ client.on('message', async message => {
       embed: {
         "color": config.colors.default,
         "fields": [{
-            "name": "Estado de " + clanRoleName.name,
+            "name": "Datos de " + clanRoleName.name,
             "value": "	󠇰	󠇰",
           },
           {
@@ -844,11 +851,11 @@ client.on('message', async message => {
           },
           {
             "name": "-\nReps de clan",
-            "value": "**!clan** _@usuario_: Añadir o quitar rol del clan al que pertenece.\n**!clan** _@usuario_ _@usuario_ _@usuario_... : Añadir o quitar rol del clan a varios usuarios a la vez (hasta 5).\n**!info**: Información extra acerca del clan."
+            "value": "**!clan** _@usuario_: Añadir o quitar rol del clan al que pertenece.:white_small_square:Limitado a 1 uso/2 h\n**!clan** _@usuario_ _@usuario_ _@usuario_... : Añadir o quitar rol del clan a varios usuarios a la vez (hasta 5).:white_small_square:Limitado a 1 uso/2 h\n**!info**: Información extra acerca del clan."
           },
           {
             "name": "-\nTodos los usuarios",
-            "value": "**!busco**: Añadir o quitar el rol de **busco-clan**, añadirlo implica quitarse los roles anteriores.\n**!quitar**: Quita todos los roles actuales (excepto miembros)."
+            "value": "**!busco**: Añadir o quitar el rol de **busco-clan**, añadirlo implica quitarse los roles anteriores.:white_small_square:Limitado a 1 uso/2 h\n**!quitar**: Quita todos los roles actuales (excepto miembros)."
           }
         ]
       }
