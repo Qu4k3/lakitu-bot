@@ -802,6 +802,8 @@ client.on('message', async message => {
       return member.user.username;
     })
     
+    if (membersWithRoleLider != null) {
+    
         message.channel.send({
       embed: {
         "color": config.colors.default,
@@ -810,12 +812,12 @@ client.on('message', async message => {
             "value": "	󠇰	󠇰",
           },
           {
-            "name": "Líder - " + membersWithRoleLider.length,
+            "name": "Líder - " + membersWithRoleLider.length + "/1",
             "value": membersWithRoleLider.join("\n"),
             "inline": true
           },
           {
-            "name": "Reps - " + membersWithRoleRep.length,
+            "name": "Reps - " + membersWithRoleRep.length + "/3",
             "value": membersWithRoleRep.join("\n"),
             "inline": true
           },
@@ -825,7 +827,16 @@ client.on('message', async message => {
             "inline": true
           }
         ]
-      }})
+      }
+    })
+      } else {
+        message.channel.send({
+          embed: {
+            color: config.colors.danger,
+            description: "Ha ocurrido algo inesperado, ponte en contacto con un mod"
+          }
+        })
+      }
     } else {
       message.channel.send({
         embed: {
