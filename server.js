@@ -147,7 +147,7 @@ client.on('message', async message => {
       message.channel.send({
         embed: {
           color: config.colors.success,
-          description: "Se te ha quitado el rol de **busco-clan**."
+          description: "<@" + message.author.id + ">, se te ha quitado el rol de **busco-clan**."
         }
       });
     } else if(clanRole != null) {
@@ -157,7 +157,7 @@ client.on('message', async message => {
       message.channel.send({
         embed: {
           color: config.colors.success,
-          description: "Se te ha añadido el rol de **busco-clan** y quitado los roles anteriores.\nAhora tienes acceso a <#405031498496868372>."
+          description: "<@" + message.author.id + ">, se te ha añadido el rol de **busco-clan** y quitado los roles anteriores.\nAhora tienes acceso a <#405031498496868372>."
         }
       })
           
@@ -167,7 +167,7 @@ client.on('message', async message => {
       message.channel.send({
         embed: {
           color: config.colors.success,
-          description: "Se te ha añadido el rol de **busco-clan**. Ahora tienes acceso a <#405031498496868372>."
+          description: "<@" + message.author.id + ">, se te ha añadido el rol de **busco-clan**.\nAhora tienes acceso a <#405031498496868372>."
         }
       })
 
